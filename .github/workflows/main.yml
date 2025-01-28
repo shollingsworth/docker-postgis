@@ -15,7 +15,8 @@ jobs:
   make-docker-images:
     strategy:
       matrix:
-        postgres: [12, 13, 14, 15, 16, 17]
+        # postgres: [12, 13, 14, 15, 16, 17]
+        postgres: [16]
         postgis: ["3.5"]
         variant: [default, alpine]
         arch: ["linux/amd64", "linux/arm64"]
@@ -23,9 +24,11 @@ jobs:
           - postgres: 16
             postgis: master
             variant: default
+            arch: linux/amd64
           - postgres: 17
             postgis: master
             variant: default
+            arch: linux/amd64
 
     name: >-
       Build docker image for

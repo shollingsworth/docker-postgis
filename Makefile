@@ -14,6 +14,11 @@ do_alpine=true
 # The following logic evaluates VERSION and VARIANT variables that may have
 # been previously specified, and modifies the "do" flags depending on the values.
 # The VERSIONS variable is also set to contain the version(s) to be processed.
+ifdef ARCH
+    DOCKER_PLATFORM=--platform=$(ARCH)
+else
+    DOCKER_PLATFORM=
+endif
 ifdef VERSION
     VERSIONS=$(VERSION) # If a version was specified, VERSIONS only contains the specified version
     ifdef VARIANT       # If a variant is specified, unset all do flags and allow subsequent logic to set them again where appropriate
@@ -76,12 +81,12 @@ update:
 define build-version
 build-$1:
 ifeq ($(do_default),true)
-	$(DOCKER) build --platform=$(ARCH) --pull -t $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1) $1
+	$(DOCKER) build $(DOCKER_PLATFORM) --pull -t $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1) $1
 	$(DOCKER) images          $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1)
 endif
 ifeq ($(do_alpine),true)
 ifneq ("$(wildcard $1/alpine)","")
-	$(DOCKER) build --platform=$(ARCH) --pull -t $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1)-alpine $1/alpine
+	$(DOCKER) build $(DOCKER_PLATFORM) --pull -t $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1)-alpine $1/alpine
 	$(DOCKER) images          $(REPO_NAME)/$(IMAGE_NAME):$(shell echo $1)-alpine
 endif
 endif
